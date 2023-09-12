@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
@@ -20,6 +21,5 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-
 
 }
