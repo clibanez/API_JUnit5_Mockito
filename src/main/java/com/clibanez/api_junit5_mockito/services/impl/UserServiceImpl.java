@@ -5,9 +5,11 @@ import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.resources.UserResource;
 import com.clibanez.api_junit5_mockito.services.UserService;
 import com.clibanez.api_junit5_mockito.services.exception.ObjectNotFoundException;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,5 +22,10 @@ public class UserServiceImpl implements UserService {
     public User findById(Integer id) {
         Optional<User> obj = userRepository.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado: " + "Id/" +id));
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }
