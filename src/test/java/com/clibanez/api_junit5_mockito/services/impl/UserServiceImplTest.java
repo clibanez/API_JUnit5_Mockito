@@ -3,13 +3,11 @@ package com.clibanez.api_junit5_mockito.services.impl;
 import com.clibanez.api_junit5_mockito.Repositories.UserRepository;
 import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.domain.dto.UserDTO;
-import org.hibernate.service.spi.InjectService;
-import org.junit.jupiter.api.Assertions;
+import com.clibanez.api_junit5_mockito.services.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +27,8 @@ class UserServiceImplTest {
     public static final String EMAIL = "clibanez@gmail.com";
     public static final String PASSWORD = "123";
 
+    public static final String EXCEPTIONMESSAGE = "Objeto não encontrado";
+
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
@@ -43,6 +43,7 @@ class UserServiceImplTest {
     private UserDTO userDTO;
 
     private Optional<User> optionalUser;
+
 
 
     @BeforeEach
@@ -63,6 +64,20 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
     }
+
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException(){
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(EXCEPTIONMESSAGE));
+        try {
+            userRepository.findById(ID);
+        }catch (Exception ex){
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals(EXCEPTIONMESSAGE,ex.getMessage());
+
+        }
+    }
+
+
 
     @Test
     void findAll() {
