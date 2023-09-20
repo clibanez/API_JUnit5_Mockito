@@ -10,4 +10,10 @@ class ApiJunit5MockitoApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void main(){
+		ApiJunit5MockitoApplication.main( new String[]{});
+	}
+
+
 }
