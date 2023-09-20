@@ -7,7 +7,5 @@ public class DataIntegratyViolationException extends RuntimeException {
         super(message);
     }
 
-    public DataIntegratyViolationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+
 }

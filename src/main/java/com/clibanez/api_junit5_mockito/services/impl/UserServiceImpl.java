@@ -3,11 +3,9 @@ package com.clibanez.api_junit5_mockito.services.impl;
 import com.clibanez.api_junit5_mockito.Repositories.UserRepository;
 import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.domain.dto.UserDTO;
-import com.clibanez.api_junit5_mockito.resources.UserResource;
 import com.clibanez.api_junit5_mockito.services.UserService;
 import com.clibanez.api_junit5_mockito.services.exception.DataIntegratyViolationException;
 import com.clibanez.api_junit5_mockito.services.exception.ObjectNotFoundException;
-import jakarta.validation.constraints.Email;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +44,12 @@ public class UserServiceImpl implements UserService {
     public User update(UserDTO userDTO) {
         findByEmail(userDTO);
       return userRepository.save(modelMapper.map(userDTO,User.class));
+    }
+
+    @Override
+    public void delete(Integer id) {
+        System.out.println(id);
+       userRepository.deleteById(id);
     }
 
     public void findByEmail(UserDTO userDTO){
