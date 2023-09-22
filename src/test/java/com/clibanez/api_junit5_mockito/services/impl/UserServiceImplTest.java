@@ -3,6 +3,7 @@ package com.clibanez.api_junit5_mockito.services.impl;
 import com.clibanez.api_junit5_mockito.Repositories.UserRepository;
 import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.domain.dto.UserDTO;
+import com.clibanez.api_junit5_mockito.services.exception.DataIntegratyViolationException;
 import com.clibanez.api_junit5_mockito.services.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,13 +12,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -110,6 +110,19 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
         assertEquals(PASSWORD, response.getPassword());
+    }
+
+    @Test
+    void whenCreateThenReturnDataIntegratyViolationException() {
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try{
+            optionalUser.get().setId(2);
+            userServiceImpl.create(userDTO);
+        }catch(Exception ex){
+            assertEquals(DataIntegratyViolationException.class,ex.getClass());
+            assertEquals("E-mail já cadastrado no sistema!", ex.getMessage());
+        }
     }
 
     @Test
