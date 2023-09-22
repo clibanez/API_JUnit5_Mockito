@@ -7,6 +7,7 @@ import com.clibanez.api_junit5_mockito.services.exception.DataIntegratyViolation
 import com.clibanez.api_junit5_mockito.services.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.function.Try;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,7 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -30,8 +31,9 @@ class UserServiceImplTest {
 
     public static final String EXCEPTIONMESSAGE = "Objeto não encontrado";
     public static final Integer INDEX = 0;
-
     public static final String E_MAIL_JA_CADASTRADO_NO_SISTEMA = "E-mail já cadastrado no sistema!";
+
+    public static final String OBJETO_NAO_ENCONTRADO = "OBECTO NÃO ENCONTRADO";
 
 
     @InjectMocks
@@ -128,7 +130,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSucess() {
         when(userRepository.save(any())).thenReturn(user);
 
         User response = userServiceImpl.update(userDTO);
@@ -155,7 +157,22 @@ class UserServiceImplTest {
     }
 
     @Test
-    void delete() {
+    void deleteWhithSucess() {
+        when(userRepository.findById(anyInt())).thenReturn(optionalUser);
+        doNothing().when(userRepository).deleteById(anyInt());
+        userServiceImpl.delete(ID);
+        verify(userRepository,times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void deleteWithObjectNotFaoundException(){
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+        try {
+            userServiceImpl.delete(ID);
+        }catch(Exception ex){
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO, ex.getMessage());
+        }
     }
 
     @Test
