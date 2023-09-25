@@ -4,12 +4,19 @@ import com.clibanez.api_junit5_mockito.Repositories.UserRepository;
 import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.domain.dto.UserDTO;
 import com.clibanez.api_junit5_mockito.services.impl.UserServiceImpl;
+import org.apache.coyote.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
@@ -28,10 +35,9 @@ class UserResourceTest {
 
 
     @InjectMocks
-    private UserServiceImpl userServiceImpl;
-
+    private UserResource userResource;
     @Mock
-    private UserRepository userRepository;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private ModelMapper modelMapper;
@@ -44,7 +50,23 @@ class UserResourceTest {
     }
 
     @Test
-    void findById() {
+    void whenFindByIdThenReturnSucess() {
+        Mockito.when(userServiceImpl.findById(Mockito.anyInt())).thenReturn(user);
+        when(modelMapper.map(any(),any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = userResource.findById(ID);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(ResponseEntity.class, response.getClass());
+
+        assertEquals(ID,response.getBody().getId());
+        assertEquals(NAME,response.getBody().getName());
+        assertEquals(EMAIL,response.getBody().getEmail());
+        assertEquals(PASSWORD,response.getBody().getPassword());
+
+
+
     }
 
     @Test
