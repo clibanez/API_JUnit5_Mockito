@@ -4,6 +4,7 @@ import com.clibanez.api_junit5_mockito.Repositories.UserRepository;
 import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.domain.dto.UserDTO;
 import com.clibanez.api_junit5_mockito.services.impl.UserServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,9 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -52,7 +56,11 @@ class UserResourceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         startUser();
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        ServletRequestAttributes servletRequestAttributes = new ServletRequestAttributes(mockRequest);
+        RequestContextHolder.setRequestAttributes(servletRequestAttributes);
     }
+
 
     @Test
     void whenFindByIdThenReturnSucess() {
@@ -96,7 +104,14 @@ class UserResourceTest {
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnCreated() {
+        when(userServiceImpl.create(Mockito.any())).thenReturn(user);
+
+        ResponseEntity<UserDTO> response = userResource.create(userDTO);
+
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.CREATED,response.getStatusCode());
+        assertNotNull(response.getHeaders().get("Location"));
     }
 
     @Test

@@ -35,10 +35,19 @@ public class UserResource {
                 .stream().map(x -> mapper.map(x, UserDTO.class)).collect(Collectors.toList()));
     }
 
+//    @PostMapping
+//    public ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
+//        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+//                .path("/{id}").buildAndExpand(userService.create(userDTO).getId()).toUri()).build();
+//    }
+
     @PostMapping
     public ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
-        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(userService.create(userDTO).getId()).toUri()).build();
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(userService.create(userDTO).getId()).toUri();
+        return ResponseEntity.created(uri).build();
+
     }
 
     @PutMapping(value = "/{id}")
