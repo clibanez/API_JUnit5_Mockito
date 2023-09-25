@@ -175,6 +175,7 @@ class UserServiceImplTest {
         }
     }
 
+
     private void startUser() {
         user = new User(ID, NAME, EMAIL, PASSWORD);
         userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
