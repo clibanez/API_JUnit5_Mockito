@@ -4,6 +4,7 @@ import com.clibanez.api_junit5_mockito.Repositories.UserRepository;
 import com.clibanez.api_junit5_mockito.domain.User;
 import com.clibanez.api_junit5_mockito.domain.dto.UserDTO;
 import com.clibanez.api_junit5_mockito.services.impl.UserServiceImpl;
+import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,11 +116,33 @@ class UserResourceTest {
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSucess() {
+        when(userServiceImpl.update(userDTO)).thenReturn(user);
+        when(modelMapper.map(any(),any())).thenReturn(userDTO);
+
+        ResponseEntity<UserDTO> response = userResource.update(ID, userDTO);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ResponseEntity.class,response.getClass());
+        assertEquals(UserDTO.class, response.getBody().getClass());
+
+        assertEquals(ID, response.getBody().getId());
+        assertEquals(NAME , response.getBody().getName());
+        assertEquals(EMAIL, response.getBody().getEmail());
     }
 
     @Test
-    void delete() {
+    void whenDeleteThenReturnSucess() {
+        doNothing().when(userServiceImpl).delete(anyInt());
+
+        ResponseEntity<UserDTO> response = userResource.delete(ID);
+
+        assertNotNull(response);
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(userServiceImpl, times(1)).delete(anyInt());
     }
 
     private void startUser() {
